@@ -23,54 +23,59 @@ if docx_file is not None:
 
 
 st.write("**2) Image**")
-image_file = st.file_uploader("Upload your image file", type=["png","jpg","jpeg"])
+image_file = st.file_uploader("Upload your image file here", type=["png","jpg","jpeg"])
 if image_file is not None:
     st.image(load_image(image_file), width=250)
     custom_mask = np.array(load_image(image_file))
 
 
-# st.write("**Parameters**")
-# cols = st.columns(2)
-# wc_width = cols[0].text_input("Width")
-# wc_height = cols[1].text_input("Height")
-# backgroundcolor_list = ['white', 'black', 'red']
-# back_color =cols[0].selectbox("Background color:", backgroundcolor_list)
+st.write("**Parameters**")
+cols = st.columns(2)
+color_list = ['white', 'black', 'gray', 'red', 'blue', 'green', 'yellow', 'orange', 'brown', 'pink', 'purple']
+background_color_choice =cols[0].selectbox("Background color:", color_list)
 
-# stopwords_choice = cols[1].radio("Do you want to use stopwords option?", options=['Yes', 'No'])
-# if stopwords_choice == 'Yes':
-#     stopwords = set(STOPWORDS)
-# else:
-#     stopwords = None
+stopwords_choice = cols[1].radio("Do you want to use stopwords option?", options=['Yes', 'No'])
+if stopwords_choice == 'Yes':
+    stopwords = set(STOPWORDS)
+else:
+    stopwords = None
 
+contour_choice = st.radio("Do you want to have a contour around your word cloud?", options=['Yes', 'No'], index=1)
+cols = st.columns(2)
+if contour_choice == 'Yes':
+    contour_width_choice = cols[0].text_input("Choose the contour width")
+    contour_color_choice = cols[1].selectbox("Choose the color of contour", color_list)
 
-# st.write("To see your word cloud press visualization button")
-# cols = st.columns(3)
-# if cols[1].button("Generator"):
-#     if image_file is None or docx_file is None:
-#         st.error("Please upload your text and image files")
-#     else:
-#         wc = WordCloud(background_color = back_color, 
-#                 stopwords = stopwords, 
-#                 mask = custom_mask, 
-#                 colormap='gist_rainbow',
-#                 collocations=False,
-#                 width=wc_width,
-#                 height=wc_height
-#     #                contour_width = 3, 
-#     #                contour_color = 'black',
-#     #                max_font_size = 50, 
-#     #                max_words = 5
-#                 )
-#         wc.generate(text)
+st.write("To see your word cloud press visualization button")
+cols = st.columns(3)
+if cols[1].button("Generator"):
+    if docx_file is None:
+        st.error("Please upload your text file.")
+    elif image_file is None:
+        st.error("Please upload your image file.")
+    elif contour_width_choice == "":
+        st.error("You need to specify the width of contour.")
+    else:
+        wc = WordCloud(mask = custom_mask,
+                background_color = background_color_choice,
+                stopwords = stopwords,
+                contour_width=float(contour_width_choice),
+                contour_color = contour_color_choice,
+                colormap='gist_rainbow',
+                collocations=False
+    #                max_font_size = 50,
+    #                max_words = 5
+                )
+        wc.generate(text)
 
-#         image_colors = ImageColorGenerator(custom_mask)
-#         wc.recolor(color_func = image_colors)
+        image_colors = ImageColorGenerator(custom_mask)
+        wc.recolor(color_func = image_colors)
 
-#         plt.rcParams['figure.figsize'] = [5.0, 5.0]
-#         plt.rcParams['figure.dpi'] = 140
-#         plt.imshow(wc, interpolation = 'bilinear')
-#         plt.axis('off')
-#         st.pyplot(plt)
+        # plt.rcParams['figure.figsize'] = [5.0, 5.0]
+        # plt.rcParams['figure.dpi'] = 140
+        plt.imshow(wc, interpolation = 'bilinear')
+        # plt.axis('off')
+        st.pyplot(plt)
 
         # st.write("If you want to download your word cloud, please choose the desired directory:")
         # cols = st.columns(3)
