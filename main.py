@@ -45,8 +45,18 @@ cols = st.columns(2)
 if contour_choice == 'Yes':
     contour_width_choice = cols[0].text_input("Choose the contour width")
     contour_color_choice = cols[1].selectbox("Choose the color of contour", color_list)
+else:
+    contour_width_choice = 0
+    contour_color_choice = None
 
-st.write("To see your word cloud press visualization button")
+colormap_choice = st.radio("Do you want to color your word cloud based on your image coloring?", options=['Yes', 'No'])
+if colormap_choice == 'No':
+    colormap_color_choice = st.text_input("Choose your desired colormap from below link:")
+    st.write("[Choosing Colormaps in Matplotlib](https://matplotlib.org/stable/tutorials/colors/colormaps.html)")
+else:
+    colormap_color_choice = None
+
+
 cols = st.columns(3)
 if cols[1].button("Generator"):
     if docx_file is None:
@@ -55,26 +65,26 @@ if cols[1].button("Generator"):
         st.error("Please upload your image file.")
     elif contour_width_choice == "":
         st.error("You need to specify the width of contour.")
+    elif colormap_choice == 'No' and colormap_color_choice == None:
+        st.error("Please choose the colormap from the website.")
     else:
         wc = WordCloud(mask = custom_mask,
                 background_color = background_color_choice,
                 stopwords = stopwords,
                 contour_width=float(contour_width_choice),
                 contour_color = contour_color_choice,
-                colormap='gist_rainbow',
-                collocations=False
-    #                max_font_size = 50,
-    #                max_words = 5
+                colormap=colormap_color_choice,
                 )
         wc.generate(text)
 
-        image_colors = ImageColorGenerator(custom_mask)
-        wc.recolor(color_func = image_colors)
+        if colormap_choice == 'Yes':
+            image_colors = ImageColorGenerator(custom_mask)
+            wc.recolor(color_func = image_colors)
 
-        # plt.rcParams['figure.figsize'] = [5.0, 5.0]
-        # plt.rcParams['figure.dpi'] = 140
+        # plt.rcParams['figure.figsize'] = [3.0, 3.0]
+        # plt.rcParams['figure.dpi'] = 1140
         plt.imshow(wc, interpolation = 'bilinear')
-        # plt.axis('off')
+        plt.axis('off')
         st.pyplot(plt)
 
         # st.write("If you want to download your word cloud, please choose the desired directory:")
