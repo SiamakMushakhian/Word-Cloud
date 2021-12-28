@@ -22,13 +22,11 @@ if docx_file is not None:
     text = str(docx_file.read(),"utf-8")
 
 
-# st.write("**2) Image**")
-# image_file = st.file_uploader("Upload your image file", type=["png","jpg","jpeg"])
-# if image_file is not None:
-#     st.image(load_image(image_file), width=250)
-
-# if image_file is not None:
-#     custom_mask = np.array(load_image(image_file))
+st.write("**2) Image**")
+image_file = st.file_uploader("Upload your image file", type=["png","jpg","jpeg"])
+if image_file is not None:
+    st.image(load_image(image_file), width=250)
+    custom_mask = np.array(load_image(image_file))
 
 
 # st.write("**Parameters**")
